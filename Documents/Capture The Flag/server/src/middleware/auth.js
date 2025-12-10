@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const authMiddleware = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) return res.status(401).json({ message: "Unauthorized" });
@@ -15,3 +15,11 @@ export const authMiddleware = (req, res, next) => {
     return res.status(403).json({ message: "Invalid token" });
   }
 };
+
+export const requireAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin only" });
+  }
+  next();
+};
+

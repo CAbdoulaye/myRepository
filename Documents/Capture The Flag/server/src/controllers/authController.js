@@ -9,6 +9,7 @@ dotenv.config();
 export const register = (req, res) => {
   console.log("test")
   const { first_name, last_name, email, password } = req.body;
+  console.log(first_name, last_name, email, password);
 
   if (!first_name || !last_name || !email || !password)
     return res.status(400).json({ message: "All fields required" });
@@ -18,7 +19,11 @@ export const register = (req, res) => {
     "SELECT * FROM users WHERE email = ?",
     [email],
     (err, results) => {
-      if (err) return res.status(500).json({ message: "Server error" });
+      if (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Server error" });
+      }
+
 
       if (results.length > 0)
         return res.status(400).json({ message: "Email already exists" });
