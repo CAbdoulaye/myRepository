@@ -1,0 +1,53 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ctf-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: capture_the_flag
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d   # ← add this line
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ctf-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+    ports:
+      - "8080:80"
+
+  backend:
+    build: ./server
+    container_name: ctf-backend
+    restart: always
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASS=
+      - DB_NAME=capture_the_flag
+      - JWT_SECRET=supersecretkey12345
+      - JWT_EXPIRE=7d
+      - COOKIE_SECRET=anothersecret123
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./client
+    container_name: ctf-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
