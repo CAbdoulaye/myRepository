@@ -2,6 +2,8 @@ import { useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "../css/Home.css";
+
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -30,9 +32,9 @@ function Login() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input name="email" placeholder="Email" onChange={handleChange} />
-      <input name="password" placeholder="Password" onChange={handleChange} />
-      <button type="submit">Login</button>
+      <input type="email" name="email" placeholder="Email" onChange={handleChange} />
+      <input type="password" name="password" placeholder="Password" onChange={handleChange} />
+      <button className ="btn-primary" type="submit">Login</button>
     </form>
   );
 }

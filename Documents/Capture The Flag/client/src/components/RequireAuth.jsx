@@ -5,6 +5,7 @@ export function RequireAuth({ children }) {
   const { user } = useAuth();
 
   if (!user) {
+    alert("Log in to see page");
     return <Navigate to="/login" replace />;
   }
 

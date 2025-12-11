@@ -3,41 +3,36 @@ import jwt from "jsonwebtoken";
 import { db } from "../config/db.js";
 import dotenv from "dotenv";
 dotenv.config();
+// import bcrypt from "bcrypt";
 
-
+ 
 // create account
-export const register = (req, res) => {
-  console.log("test")
+export const register = async (req, res) => {
   const { first_name, last_name, email, password } = req.body;
-  console.log(first_name, last_name, email, password);
 
   if (!first_name || !last_name || !email || !password)
     return res.status(400).json({ message: "All fields required" });
 
-  // check if email already exists
   db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
-    (err, results) => {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Server error" });
-      }
-
+    async (err, results) => {
+      if (err) return res.status(500).json({ message: "Server error" });
 
       if (results.length > 0)
         return res.status(400).json({ message: "Email already exists" });
 
+      // hash password here (backend only)
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const createdAt = new Date();
 
-      // frontend already hashed the password
       db.query(
         `INSERT INTO users (first_name, last_name, email, password, role, created_at)
          VALUES (?, ?, ?, ?, ?, ?)`,
-        [first_name, last_name, email, password, "user", createdAt],
+        [first_name, last_name, email, hashedPassword, "user", createdAt],
         (err2) => {
           if (err2) return res.status(500).json({ message: "Database error" });
-
           return res.status(201).json({ message: "User registered successfully" });
         }
       );
@@ -46,22 +41,24 @@ export const register = (req, res) => {
 };
 
 
+
 // log in
 export const login = (req, res) => {
-  const { email, password } = req.body; // password = hashed from frontend
+  const { email, password } = req.body; // raw password
 
   db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
-    (err, results) => {
+    async (err, results) => {
       if (err) return res.status(500).json({ message: "Server error" });
       if (results.length === 0)
         return res.status(400).json({ message: "Invalid credentials" });
 
       const user = results[0];
 
-      // Direct comparison (frontend hash must match stored hash)
-      if (password !== user.password)
+      // compare raw to hashed
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
         return res.status(400).json({ message: "Invalid credentials" });
 
       const token = jwt.sign(
@@ -74,6 +71,7 @@ export const login = (req, res) => {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
+        path: "/",
       });
 
       return res.json({
@@ -90,6 +88,7 @@ export const login = (req, res) => {
 };
 
 
+
 // LOG OUT
 export const logout = (req, res) => {
   res.clearCookie("token");
@@ -99,5 +98,6 @@ export const logout = (req, res) => {
 
 // Get current user
 export const me = (req, res) => {
+  // console.log(req.user)
   return res.json({ user: req.user }); // req.user = decoded JWT
 };

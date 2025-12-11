@@ -1,15 +1,15 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
+// Routes
 import authRoutes from "./routes/authRoutes.js";
 import challengeRoutes from "./routes/challengeRoutes.js";
-
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-
 
 // frontend allowed origin
 app.use(
@@ -20,9 +20,7 @@ app.use(
   })
 );
 
-// app.use(cors()); 
-
-
+// Test if backend is server is working
 app.get("/", (req, res) => {
   res.send("Backend is working!");
 });

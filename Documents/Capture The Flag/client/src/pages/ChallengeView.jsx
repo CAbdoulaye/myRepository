@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
+import "../css/ChallengeView.css";
 
 function ChallengeView() {
   const { id } = useParams();
@@ -15,7 +16,7 @@ function ChallengeView() {
         setChallenge(res.data);
       } catch {
         setMessage("Challenge not found");
-      }             
+      }
     };
     load();
   }, [id]);
@@ -24,28 +25,48 @@ function ChallengeView() {
     try {
       const res = await api.post(`/challenges/${id}/submit`, { flag });
       setMessage(res.data.message);
+      setFlag("");
     } catch (err) {
       setMessage(err.response?.data?.message || "Error submitting flag");
     }
   };
 
-  if (!challenge) return <p>Loading…</p>;
+  if (!challenge) return <p className="loading">Loading…</p>;
 
   return (
-    <div>
-      <h2>{challenge.title}</h2>
-      <p>{challenge.description}</p>
-      <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
+    <div className="challenge-view-container">
+      <h2 className="challenge-title">{challenge.title}</h2>
 
-      <h3>Submit Flag</h3>
-      <input
-        placeholder="Enter flag"
-        value={flag}
-        onChange={(e) => setFlag(e.target.value)}
-      />
-      <button onClick={submitFlag}>Submit</button>
+      <p className="challenge-description">{challenge.description}</p>
 
-      {message && <p><strong>{message}</strong></p>}
+      <p className={`difficulty-badge ${challenge.difficulty}`}>
+        Difficulty: {challenge.difficulty}
+      </p>
+
+      <div className="submit-box">
+        <h3>Submit Flag</h3>
+
+        <input
+          className="flag-input"
+          placeholder="Enter flag..."
+          value={flag}
+          onChange={(e) => setFlag(e.target.value)}
+        />
+
+        <button className="submit-btn" onClick={submitFlag}>
+          Submit
+        </button>
+
+        {message && (
+          <p
+            className={`response-message ${
+              message.toLowerCase().includes("correct") ? "success" : "error"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
