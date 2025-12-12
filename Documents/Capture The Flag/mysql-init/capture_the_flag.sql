@@ -41,9 +41,9 @@ CREATE TABLE `challenges` (
 --
 
 INSERT INTO `challenges` (`id`, `title`, `description`, `difficulty`, `flag`, `created_at`) VALUES
-(2, 'Hash Me If You Can', 'MD5 hash: 5f4dcc3b5aa765d61d8327deb882cf99', 'easy', 'FLAG{password}', '2025-12-10 19:04:23'),
+(2, 'Hash Me If You Can', 'wrap your answer in FLAG{}: MD5 hash: 5f4dcc3b5aa765d61d8327deb882cf99', 'easy', 'FLAG{password}', '2025-12-10 19:04:23'),
 (3, 'Encoded Secrets', 'Base64 encoded: RkxBR3tiYXNlNjRfZnVuX2VudHJ5fQ==', 'medium', 'FLAG{base64_fun_entry}', '2025-12-10 19:04:23'),
-(4, 'SQL Sleuthing', 'Basic SQL challenge description.', 'medium', 'FLAG{sql_master}', '2025-12-10 19:04:23'),
+-- (4, 'SQL Sleuthing', 'Basic SQL challenge description.', 'medium', 'FLAG{sql_master}', '2025-12-10 19:04:23'),
 (9, 'Reverse Me', 'Reverse this string to get the flag:\n\"}gflaf_eht_timbus{FTC\"', 'easy', 'CTF{submit_the_flag}', '2025-12-11 03:19:46'),
 (10, 'Basic Math Challenge', 'Solve: 128 + 54 + 100\nThe result wrapped in CTF{} is the flag.', 'easy', 'CTF{282}', '2025-12-11 03:20:14'),
 (11, 'Riddle: I Speak Without a Mouth', 'What am I?\nWrap your answer in CTF{}', 'medium', 'CTF{echo}', '2025-12-11 03:20:34'),
